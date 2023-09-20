@@ -86,6 +86,15 @@
         </tr>
     </table>
 
+    <table border="1" width="100%">
+        <tr>
+            <td align="center">
+                <img class="img-fuild" src="<?= $imagenprueba ?>" />
+            </td>
+        </tr>
+    </table>
+
+
 
     <?php foreach ($informcionGeneral as $v) { ?>
         <table border="1" width="100%">

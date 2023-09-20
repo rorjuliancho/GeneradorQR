@@ -87,7 +87,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             </div>
 
             <div class=" col-lg-12 text-center">
-                <a class="btn btn-primary" href="<?= base_url() ?>pdf">Generar Guía</a>
+                <a class="btn btn-primary" href="<?= base_url() ?>asdasdasda">Generar Guía</a>
             </div>
 
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">

@@ -86,11 +86,11 @@ class Generadorqr_model extends CI_Model
         }
     }
 
-    public function generatePDFImage($id, $ubicacion)
+    public function generatePDFImage($id, $seccion)
     {
         $this->db->select('*');
         $this->db->where('idguia', $id);
-        $this->db->where('ubicacion', $ubicacion);
+        $this->db->where('seccion', $seccion);
         $query = $this->db->get('imagen_guia ');
 
         if ($query->num_rows() > 0) {
@@ -98,5 +98,14 @@ class Generadorqr_model extends CI_Model
         } else {
             return false;
         }
+    }
+
+
+    public function updateQR($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->update('guia', $data);
+      
+        return true;
     }
 }
