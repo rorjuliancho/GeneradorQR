@@ -19,79 +19,13 @@ class MYPDF extends TCPDF
     	$this->SetFont('helvetica', 'B', 9);	
 		//	$this->MultiCell(60, 20, $a, 1, 'C', 0, 0, 65, 7, true, 0,true, true, 20, 'M');
 		$this->SetFont('helvetica', 'B', 9);
-	//	$this->writeHTMLCell(70, 15, 125, 7, 'Informe: '.$nombre_informe.' <br>'.$numot.' // REVISION: 0.0.0', 1, 0, 0, true, 'C', true);
-		//$this->MultiCell(91, 15, 'Informe:  // REVISION: 0.0.0', 1, 'C', 0, 1, 190, 7, true, 1, true, true, 0, 'M');		
-		//$this->writeHTMLCell(70, 5, 125, 22, '<table><tr><td width="120%">P�gina '.$this->getAliasNumPage().' de '.$this->getAliasNbPages().'</td></tr></table>', 1, 1, 0, true, 'C', true);		
-   
-    
         $this->MultiCell(180, 16.5, "GUÍA DE MANEJO RÁPIDO DE EQUIPOS MÉDICOS", 1, 'C', 0, 0, 15, 30, true, 0, false, true, 16, 'M');
-		#$this->writeHTMLCell(60, 12, 135, 30, 'Informe:  <br> / Revisi�n: 1', 1, 0, 0, true, 'C', true);
-		#$this->writeHTMLCell(60, 4.5, 135, 42, '<table><tr><td width="120%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P�gina '.$this->getAliasNumPage().' de '.$this->getAliasNbPages().'</td></tr></table>', 1, 1, 0, true, 'C', true);
-    
+	
     }
 	
     // Page footer
    public function Footer() 
 	{
-		 /*
-	global $pais_emp;
-	switch($pais_emp)
-	{
-		CASE 'Chile':
-		$this->SetFont('helvetica', '', 6);		
-		$this->Line(10, 279, 195, 279);
-		$image_file = K_PATH_IMAGES.'../../../images/cercal_pie_pag.jpg';
-        $this->Image($image_file, 17, 282, 30, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-		$this->writeHTMLCell(45, 15, 15, 280, '', 0, 0, 0, true, 'C', true);	
-		$this->writeHTMLCell(90, 15, 60, 280, '<strong>Cercal Chile</strong><br>Cercal Ingenier�a SpA.<br>
-							Monse�or Sotero Sanz N� 100, Piso 9, Of. 902, Providencia, Santiago de Chile<br>T�lefono:
-							 +56 2 28 11 8824 / Correo: clientes@cercal.cl / capacitaciones@cercal.cl', 0, 0, 0, true, 'L', true);	
-		$image_file2 = K_PATH_IMAGES.'../../../images/parte3.jpg';							 
-        $this->Image($image_file2, 160, 285, 35, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);		
-		$this->writeHTMLCell(45, 15, 150, 280, '', 0, 1, 0, true, 'C', true);	
-		break;
-		
-		CASE 'Colombia':
-		$this->SetFont('helvetica', '', 6);		
-		$this->Line(10, 279, 195, 279);
-		$image_file = K_PATH_IMAGES.'../../../images/cercal_pie_pag.jpg';
-        $this->Image($image_file, 17, 282, 30, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-		$this->writeHTMLCell(45, 15, 15, 280, '', 0, 0, 0, true, 'C', true);	
-		$this->writeHTMLCell(90, 15, 60, 280, '<strong>Cercal Colombia</strong><br>Cercal Ingenier�a SpA<br>Avenida El Dorado No. 68 c.1, Of. 204, Bogot�, Colombia<br>Tel�fono: +57 1 4322795 / Correo: contacto@cercal.cl', 0, 0, 0, true, 'L', true);							 
- 		$image_file2 = K_PATH_IMAGES.'../../../images/parte3.jpg';	      
-	    $this->Image($image_file2, 160, 285, 35, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);		
-		$this->writeHTMLCell(45, 15, 150, 280, '', 0, 1, 0, true, 'C', true);	
-		break;	
-		
-		DEFAULT:
-		$this->SetFont('helvetica', '', 6);		
-		$this->Line(10, 279, 195, 279);
-		$image_file = K_PATH_IMAGES.'../../../images/cercal_pie_pag.jpg';
-        $this->Image($image_file, 17, 282, 30, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-		$this->writeHTMLCell(45, 15, 15, 280, '', 0, 0, 0, true, 'C', true);	
-		$this->writeHTMLCell(90, 15, 60, 280, '<strong>Cercal Chile</strong><br>Cercal Ingenier�a SpA.<br>
-							Monse�or Sotero Sanz N� 100, Piso 9, Of. 902, Providencia, Santiago de Chile<br>T�lefono:
-							 +56 2 28 11 8824 / Correo: clientes@cercal.cl / capacitaciones@cercal.cl', 0, 0, 0, true, 'L', true);	
-		$image_file2 = K_PATH_IMAGES.'../../../images/parte3.jpg';							 
-        $this->Image($image_file2, 160, 285, 35, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);		
-		$this->writeHTMLCell(45, 15, 150, 280, '', 0, 1, 0, true, 'C', true);	
-		break;		
-	}
-	}
-	
-		 
-		$this->SetFont('helvetica', '', 6);		
-		$this->Line(10, 279, 195, 279);
-		$image_file = K_PATH_IMAGES.'../../../design/images/cercal_pie_pag.jpg';
-        $this->Image($image_file, 17, 282, 30, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-		$this->writeHTMLCell(45, 15, 15, 280, '', 0, 0, 0, true, 'C', true);	
-		$this->writeHTMLCell(90, 15, 60, 280, '<strong>Cercal Chile</strong><br>Cercal Ingenier�a SpA.<br>
-							Monse�or Sotero Sanz N� 100, Piso 9, Of. 902, Providencia, Santiago de Chile<br>T�lefono:
-							 +56 2 28 11 8824 / Correo: clientes@cercal.cl / capacitaciones@cercal.cl', 0, 0, 0, true, 'L', true);	
-		$image_file2 = K_PATH_IMAGES.'../../../design/images/parte3.jpg';							 
-        $this->Image($image_file2, 160, 285, 35, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);		
-		$this->writeHTMLCell(45, 15, 150, 280, '', 0, 1, 0, true, 'C', true);*/
-
 		$this->SetFont('helvetica', '', 6);		
 		#$this->Line(10, 279, 195, 279);
 		$image_file2 = base_url().'public/img/footer.png';							 

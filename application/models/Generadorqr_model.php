@@ -77,7 +77,7 @@ class Generadorqr_model extends CI_Model
     {
         $this->db->select('*');
         $this->db->where('id', $id);
-        $query = $this->db->get('guia g');
+        $query = $this->db->get('guia');
 
         if ($query->num_rows() > 0) {
             return $query->result();

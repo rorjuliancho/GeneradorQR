@@ -49,7 +49,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     <td><?= $i->nota_funcionamiento ?></td>
                                     <td><?= $i->limpieza ?></td>
                                     <td><?= $i->fecha_creacion ?></td>
-                                    <td><a class="btn btn-primary" href="<?= base_url() ?>verpdf/<?= $i->url_guia ?>">Ver Guía</a></td>
+                                    <td><a class="btn btn-primary" href="<?= base_url() ?>generarpdf/<?= $i->id ?>">Ver Guía</a></td>
                                 </tr>
                             <?php } ?>
                         <?php } ?>

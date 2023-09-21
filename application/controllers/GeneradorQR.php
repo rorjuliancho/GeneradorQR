@@ -119,7 +119,7 @@ class GeneradorQR extends CI_Controller
 
 		$mi_archivo = 'imageInputFunciones';
 		$config['upload_path'] = 'uploads/funciones';
-		//              'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+		//'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
 		$config['allowed_types'] = 'gif|jpg|jpeg|png';
 		$config['max_size'] = '5000000';
 		$config['quality'] = '90%';
@@ -173,179 +173,50 @@ class GeneradorQR extends CI_Controller
 	/**
 	 * Esta funcion nos permite generar el código QR que va a estar visible en la guia de uso rápido
 	 */
-	function generate_qrcode($id)
+	function generate_qrcode()
 	{
-		$this->load->library('ciqrcode');
-		$data = base_url() . 'generarpdf/' . $id;;
-		/* Data */
-		#$hex_data   = bin2hex($data);
-		$save_name  = "GMREM-" . rand(1, 100000000) . '.png';
+		for ($i = 1; $i <= 15; $i++) {
+			$this->load->library('ciqrcode');
+			//$data = base_url() . 'generarpdf/' . $id;
+			$data = "https://jagesint.com/guiadeusorapido/generarpdf/" . $i;
+			/* Data */
+			#$hex_data   = bin2hex($data);
+			$save_name  = "GMREM-" . $i . '.png';
 
-		/* QR Code File Directory Initialize */
-		$dir = 'public/qr/';
-		if (!file_exists($dir)) {
-			mkdir($dir, 0775, true);
+			/* QR Code File Directory Initialize */
+			$dir = 'public/qr/';
+			if (!file_exists($dir)) {
+				mkdir($dir, 0775, true);
+			}
+
+			/* QR Configuration  */
+			$config['cacheable']    = true;
+			$config['imagedir']     = $dir;
+			$config['quality']      = true;
+			$config['size']         = '1024';
+			$config['black']        = array(255, 255, 255);
+			$config['white']        = array(255, 255, 255);
+			$this->ciqrcode->initialize($config);
+
+			/* QR Data  */
+			$params['data']     = $data;
+			$params['level']    = 'L';
+			$params['size']     = 10;
+			$params['savename'] = FCPATH . $config['imagedir'] . $save_name;
+
+			$this->ciqrcode->generate($params);
+
+			/* Return Data */
+			$return = array(
+				'content' => $data,
+				'file'    => $dir . $save_name
+			);
 		}
 
-		/* QR Configuration  */
-		$config['cacheable']    = true;
-		$config['imagedir']     = $dir;
-		$config['quality']      = true;
-		$config['size']         = '1024';
-		$config['black']        = array(255, 255, 255);
-		$config['white']        = array(255, 255, 255);
-		$this->ciqrcode->initialize($config);
-
-		/* QR Data  */
-		$params['data']     = $data;
-		$params['level']    = 'L';
-		$params['size']     = 10;
-		$params['savename'] = FCPATH . $config['imagedir'] . $save_name;
-
-		$this->ciqrcode->generate($params);
-
-		/* Return Data */
-		$return = array(
-			'content' => $data,
-			'file'    => $dir . $save_name
-		);
-		return $save_name;
-	}
-	/**
-	 * Esta funcion nos permite generar el pdf de la guia de uso rapido, dado el id de la guia
-	 */
-	public function pdf()
-	{
-		$this->load->library('pdf');
-		$id = 5;
-		$principal = "principal";
-		$funciones = "funciones";
-		$partes = "partes";
-		$arrayFunciones = array();
-		$arrayPartes = array();
-
-		$result['informcionGeneral'] = $this->Generadorqr_model->generatePDF($id);
-
-		$imagenPrincipal = $this->Generadorqr_model->generatePDFImage($id, $principal);
-		$imagenFunciones = $this->Generadorqr_model->generatePDFImage($id, $funciones);
-		$imagenPartes = $this->Generadorqr_model->generatePDFImage($id, $partes);
-
-
-		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenPrincipal[0]->nombre_img;
-		$image_data = file_get_contents($image_path_principal);
-		$base64_image = base64_encode($image_data);
-		$result['imagenPrincipal'] = "data:image/jpg;base64," . $base64_image;
-
-		foreach ($imagenFunciones as $if) {
-			$image_path_principal = base_url() . "uploads/" . $funciones . "/" . $if->nombre_img;
-			$image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpg;base64," . $base64_image;
-			array_push($arrayFunciones, $b64, $if->descripcion);
-		}
-
-		foreach ($imagenPartes as $ip) {
-			$image_path_principal = base_url() . "uploads/" . $partes . "/" . $ip->nombre_img;
-			$image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpg;base64," . $base64_image;
-			array_push($arrayPartes, $b64, $ip->descripcion);
-		}
-
-		$htmlfuncione = "";
-
-		$htmlarryFuncines = array();
-		$htmlarrypartes = array();
-
-		foreach ($arrayFunciones as $af) {
-			$htmlfuncione = '<tr>' .
-				'<td align="center">' .
-				'<img class="img-fuild" src="' . $af . '"/>' .
-				'</td>' .
-				'</tr>' .
-				'<tr>' .
-				'<td align="center">' .
-				'<p>' . $af . '</p>' .
-				'</td>' .
-				'</tr>';
-			array_push($htmlarryFuncines, $htmlfuncione);
-		}
-
-		foreach ($arrayPartes as $af) {
-			$htmlpartes = '<tr>' .
-				'<td align="center">' .
-				'<img class="img-fuild" src="' . $af . '"/>' .
-				'</td>' .
-				'</tr>' .
-				'<tr>' .
-				'<td align="center">' .
-				'<p>' . $af . '</p>' .
-				'</td>' .
-				'</tr>';
-			array_push($htmlarrypartes, $htmlpartes);
-		}
-
-
-		$result['imagenPrincipal'];
-		/* $result['imagenFunciones'] = $arrayFunciones;
-		$result['imagenPartes'] = $arrayPartes; */
-
-		$result['htmlarryFuncines'] = $htmlarryFuncines;
-		$result['htmlarrypartes'] = $htmlarrypartes;
-
-		$url = base_url() . 'uploads/funciones/1698.png';
-		$base64_image = base64_encode($url);
-		$result['imagenprueba'] = "data:image/png;base64," . $base64_image;
-
-		$html = $this->load->view('generatePdf', $result, true);
-		$valuePDf = "GUÍA DE MANEJO RÁPIDO DE EQUIPOS MÉDICOS";
-		$this->pdf->createPDF($html, $valuePDf);
+		//return $save_name;
 	}
 
-	public function viewPdf()
-	{
-		$this->load->library('pdf');
-		$id = 5;
-		$principal = "principal";
-		$funciones = "funciones";
-		$partes = "partes";
-		$arrayFunciones = array();
-		$arrayPartes = array();
 
-		$result['informcionGeneral'] = $this->Generadorqr_model->generatePDF($id);
-		$imagenPrincipal = $this->Generadorqr_model->generatePDFImage($id, $principal);
-		$imagenFunciones = $this->Generadorqr_model->generatePDFImage($id, $funciones);
-		$imagenPartes = $this->Generadorqr_model->generatePDFImage($id, $partes);
-
-
-		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenPrincipal[0]->nombre_img;
-		$image_data = file_get_contents($image_path_principal);
-		$base64_image = base64_encode($image_data);
-		$result['imagenPrincipal'] = "data:image/jpeg;base64," . $base64_image;
-
-		foreach ($imagenFunciones as $if) {
-			$image_path_principal = base_url() . "uploads/" . $funciones . "/" . $if->nombre_img;
-			$image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpeg;base64," . $base64_image;
-			array_push($arrayFunciones, $b64, $if->descripcion);
-		}
-
-		foreach ($imagenPartes as $ip) {
-			$image_path_principal = base_url() . "uploads/" . $partes . "/" . $ip->nombre_img;
-			$image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpeg;base64," . $base64_image;
-			array_push($arrayPartes, $b64, $ip);
-		}
-
-
-		$result['imagenPrincipal'];
-		$result['imagenFunciones'] = $arrayFunciones;
-		$result['imagenPartes'] = $arrayPartes;
-
-		$this->load->view('generatePdf', $result);
-	}
 
 	public function last_id()
 	{
@@ -372,7 +243,6 @@ class GeneradorQR extends CI_Controller
 
 	public function generarpdf($id)
 	{
-
 		$this->load->library('MYPDF');
 
 		// create new PDF document
@@ -413,9 +283,7 @@ class GeneradorQR extends CI_Controller
 			$pdf->setLanguageArray($l);
 		}
 
-		// ---------------------------------------------------------
 
-		#$id = 5;
 		$principal = "principal";
 		$funciones = "funciones";
 		$partes = "partes";
@@ -427,6 +295,10 @@ class GeneradorQR extends CI_Controller
 		$imagenPrincipal = $this->Generadorqr_model->generatePDFImage($id, $principal);
 		$imagenFunciones = $this->Generadorqr_model->generatePDFImage($id, $funciones);
 		$imagenPartes = $this->Generadorqr_model->generatePDFImage($id, $partes);
+
+
+
+		$urlQR = base_url() . "public/qr/" . $informcionGeneral[0]->url_guia;
 
 
 		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenPrincipal[0]->nombre_img;
@@ -469,7 +341,6 @@ class GeneradorQR extends CI_Controller
 		<style>
 		table{
 			text-align:center;
-			
 		}
 
 		.p-3{
@@ -482,6 +353,9 @@ class GeneradorQR extends CI_Controller
 		}
 		.warning{
 			background-color:#FCFF00;
+		}
+		img{
+			width:400px;
 		}
 		</style>
 		<table width="100%">
@@ -497,7 +371,7 @@ class GeneradorQR extends CI_Controller
 			</td>
 		</tr>
 		<tr  class="p-3">
-		<td><img src="$image_path_principal" width='100px' /></td>
+		<td><img src="$image_path_principal"  /></td>
 		</tr>
 		<tr>
 			<td align="center">
@@ -550,16 +424,20 @@ EOD;
 				$html1 = <<<EOD
 				<style>
 				table{
-					text-align:center;
-					
+					text-align:center !important;
 				}
-
+				img{
+					width:500px;
+				}
+				.text-center {
+					text-align: center !important;
+				}
 				</style>
-<table >
-<tr>
-    <td><img src="$arrayFunciones[$i]" width='800px' /></td>
-</tr>
-</table>
+				<table >
+				<tr class="text-center">
+					<td align="center"><img src="$arrayFunciones[$i]" /></td>
+				</tr>
+				</table>
 EOD;
 				$pdf->writeHTML($html1, true, false, false, false, '');
 			} else {
@@ -567,7 +445,6 @@ EOD;
 				<style>
 				table{
 					text-align:center;
-					
 				}
 
 				</style>
@@ -612,10 +489,14 @@ EOD;
 					
 				}
 
+				img{
+					width:400px;
+				}
+
 				</style>
 <table>
 <tr>
-    <td><img src="$arrayPartes[$i]" width='800px' /></td>
+    <td><img src="$arrayPartes[$i]"  /></td>
 </tr>
 </table>
 EOD;
@@ -698,9 +579,32 @@ EOD;
 EOD;
 		$pdf->writeHTML($html3, true, false, false, false, '');
 
+		$htmlQr = <<<EOD
+		<style>
+		table{
+			text-align:center;
+		}
 
+		.p-3{
+			padding: 14px;
+		}
 
+		.m-3{
+			margin-top:20px;
+			margin-buttom:20px;
+		}
+		img{
+			width:800px;
+		}
+		</style>
+		<table  width="100%">
+		<tr>
+    		<td><img src="$urlQR" /></td>
+		</tr>
+		</table>
+EOD;
+		$pdf->writeHTML($htmlQr, true, false, false, false, '');
 
-		$pdf->Output('Algo.pdf', 'I');
+		$pdf->Output('GUÍA DE MANEJO RÁPIDO DE EQUIPOS MÉDICOS.pdf', 'I');
 	}
 }
