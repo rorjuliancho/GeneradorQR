@@ -359,12 +359,12 @@ class GeneradorQR extends CI_Controller
 		$id = $this->last_id();
 
 		$urlQR = $this->generate_qrcode($id);
-		
+
 		$data = array(
 			'url_guia' => $urlQR
 		);
 		$this->Generadorqr_model->updateQR($id, $data);
-		
+
 		$this->generarpdf($id);
 
 		redirect('');
@@ -435,19 +435,19 @@ class GeneradorQR extends CI_Controller
 		$result['imagenPrincipal'] = "data:image/jpg;base64," . $base64_image;
 
 		foreach ($imagenFunciones as $if) {
-			$image_path_principal = base_url() . "uploads/" . $funciones . "/" . $if->nombre_img;
+			$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $if->nombre_img;
 			/* 	$image_data = file_get_contents($image_path_principal);
 			$base64_image = base64_encode($image_data);
 			$b64 = "data:image/jpg;base64," . $base64_image; */
-			array_push($arrayFunciones, $image_path_principal, $if->descripcion);
+			array_push($arrayFunciones, $image_path_funciones, $if->descripcion);
 		}
 
 		foreach ($imagenPartes as $ip) {
-			$image_path_principal = base_url() . "uploads/" . $partes . "/" . $ip->nombre_img;
+			$image_path_partes = base_url() . "uploads/" . $partes . "/" . $ip->nombre_img;
 			/* $image_data = file_get_contents($image_path_principal);
 			$base64_image = base64_encode($image_data);
 			$b64 = "data:image/jpg;base64," . $base64_image; */
-			array_push($arrayPartes, $image_path_principal, $ip->descripcion);
+			array_push($arrayPartes, $image_path_partes, $ip->descripcion);
 		}
 
 		foreach ($informcionGeneral as $ig) {
@@ -484,7 +484,7 @@ class GeneradorQR extends CI_Controller
 			background-color:#FCFF00;
 		}
 		</style>
-		<table border="1"  width="100%">
+		<table width="100%">
 		<tr class="p-3">
 			<td align="center">
 				<h1 >
@@ -555,7 +555,7 @@ EOD;
 				}
 
 				</style>
-<table border="1">
+<table >
 <tr>
     <td><img src="$arrayFunciones[$i]" width='800px' /></td>
 </tr>
@@ -571,7 +571,7 @@ EOD;
 				}
 
 				</style>
-				<table border="1">
+				<table>
 				<tr>
 				<td>
 					<h3>$arrayFunciones[$i]</h3>
@@ -593,7 +593,7 @@ EOD;
 				}
 
 				</style>
-				<table border="1">
+				<table >
 				<tr>
 				<td>
 					<h2><strong>PARTES</strong></h2>
@@ -613,7 +613,7 @@ EOD;
 				}
 
 				</style>
-<table border="1">
+<table>
 <tr>
     <td><img src="$arrayPartes[$i]" width='800px' /></td>
 </tr>
@@ -629,7 +629,7 @@ EOD;
 				}
 
 				</style>
-				<table border="1">
+				<table >
 				<tr>
 				<td>
 					<h3>$arrayPartes[$i]</h3>
@@ -660,15 +660,15 @@ EOD;
 			background-color:#FCFF00;
 		}
 		</style>
-		<table border="1"  width="100%">
+		<table   width="100%">
 		<tr class="p-3">
 			<td align="center">
-				<h1 >
+				<h3 >
 				<br>
 				$nota_partes
 				<br>
 				<br>
-				</h1>
+				</h3>
 
 			</td>
 		</tr>
@@ -695,11 +695,6 @@ EOD;
 
 		
 	</table>
-
-
-
-
-
 EOD;
 		$pdf->writeHTML($html3, true, false, false, false, '');
 
