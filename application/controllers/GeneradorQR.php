@@ -33,75 +33,136 @@ class GeneradorQR extends CI_Controller
 
 	public function insertarimagenprincipal()
 	{
-		$ImagenPrincipal = $this->input->post("ImagenPrincipal");
+		$informacionEquipo = $this->input->post("ImagenPrincipal");
+		$nombreImagen = "";
+		if (empty($_FILES['imageInput']['name'])) {
+			$nombreImagen = "blanco.png";
+			$file_name = $nombreImagen;
+			$user_img_profile = $file_name;
+			$mi_archivo = 'imageInput';
+			$config['upload_path'] = 'uploads/partes';
+			// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size'] = '5000000';
+			$config['quality'] = '90%';
+			$config['file_name'] = $user_img_profile;
+			$this->load->library('upload', $config);
 
-		$ram = rand(1, 10000);
-		$file_name = $_FILES['imageInput']['name'];
-		$tmp = explode('.', $file_name);
-		$extension_img = end($tmp);
+			if (!$this->upload->do_upload($mi_archivo)) {
+				echo "se presento un error al cargar la imagen";
+			}
 
-		$user_img_profile = $ram . '.' . $extension_img;
+			$data = array(
+				'nombre_img' => $user_img_profile,
+				'descripcion' => $informacionEquipo,
+				'idguia' => $this->last_id(),
+				'seccion' => 'pricipal'
 
-		$mi_archivo = 'imageInput';
-		$config['upload_path'] = 'uploads/principal';
-		//'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
-		$config['allowed_types'] = 'gif|jpg|jpeg|png';
-		$config['max_size'] = '5000000';
-		$config['quality'] = '90%';
-		$config['file_name'] = $user_img_profile;
-		$this->load->library('upload', $config);
-		if (!$this->upload->do_upload($mi_archivo)) {
-			echo "se presento un error al cargar la imagen";
+			);
+
+			$this->Generadorqr_model->insertAllPopUp($data);
+
+			redirect('cargarImagenes/?e=1');
+		} else {
+			$ram = rand(1, 10000);
+			$file_name = $_FILES['imageInput']['name'];
+			$tmp = explode('.', $file_name);
+			$extension_img = end($tmp);
+
+			$user_img_profile = $ram . '.' . $extension_img;
+
+			$mi_archivo = 'imageInput';
+			$config['upload_path'] = 'uploads/partes';
+			// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size'] = '5000000';
+			$config['quality'] = '90%';
+			$config['file_name'] = $user_img_profile;
+			$this->load->library('upload', $config);
+
+			if (!$this->upload->do_upload($mi_archivo)) {
+				echo "se presento un error al cargar la imagen";
+			}
+
+			$data = array(
+				'nombre_img' => $user_img_profile,
+				'descripcion' => $informacionEquipo,
+				'idguia' => $this->last_id(),
+				'seccion' => 'principal'
+
+			);
+
+			$this->Generadorqr_model->insertAllPopUp($data);
+
+			redirect('cargarImagenes/?e=1');
 		}
-
-		$data = array(
-			'nombre_img' => $user_img_profile,
-			'descripcion' => $ImagenPrincipal,
-			'idguia' => $this->last_id(),
-			'seccion' => 'principal'
-
-		);
-
-		$this->Generadorqr_model->insertAllPopUp($data);
-		redirect('cargarImagenes/?e=1');
 	}
 
 	public function insertarpartes()
 	{
-
+		$nombreImagen = "";
 		$informacionEquipo = $this->input->post("informacionEquipo");
+		if (empty($_FILES['imageInputPartes']['name'])) {
+			$nombreImagen = "blanco.png";
+			$file_name = $nombreImagen;
+			$user_img_profile = $file_name;
+			$mi_archivo = 'imageInput';
+			$config['upload_path'] = 'uploads/partes';
+			// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size'] = '5000000';
+			$config['quality'] = '90%';
+			$config['file_name'] = $user_img_profile;
+			$this->load->library('upload', $config);
 
-		$ram = rand(1, 10000);
-		$file_name = $_FILES['imageInput']['name'];
-		$tmp = explode('.', $file_name);
-		$extension_img = end($tmp);
+			if (!$this->upload->do_upload($mi_archivo)) {
+				echo "se presento un error al cargar la imagen";
+			}
 
-		$user_img_profile = $ram . '.' . $extension_img;
+			$data = array(
+				'nombre_img' => $user_img_profile,
+				'descripcion' => $informacionEquipo,
+				'idguia' => $this->last_id(),
+				'seccion' => 'partes'
 
-		$mi_archivo = 'imageInput';
-		$config['upload_path'] = 'uploads/partes';
-		// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
-		$config['allowed_types'] = 'gif|jpg|jpeg|png';
-		$config['max_size'] = '5000000';
-		$config['quality'] = '90%';
-		$config['file_name'] = $user_img_profile;
-		$this->load->library('upload', $config);
+			);
 
-		if (!$this->upload->do_upload($mi_archivo)) {
-			echo "se presento un error al cargar la imagen";
+			$this->Generadorqr_model->insertAllPopUp($data);
+
+			redirect('cargarImagenes/?e=1');
+		} else {
+			$ram = rand(1, 10000);
+			$file_name = $_FILES['imageInputPartes']['name'];
+			$tmp = explode('.', $file_name);
+			$extension_img = end($tmp);
+
+			$user_img_profile = $ram . '.' . $extension_img;
+
+			$mi_archivo = 'imageInputPartes';
+			$config['upload_path'] = 'uploads/partes';
+			// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size'] = '5000000';
+			$config['quality'] = '90%';
+			$config['file_name'] = $user_img_profile;
+			$this->load->library('upload', $config);
+
+			if (!$this->upload->do_upload($mi_archivo)) {
+				echo "se presento un error al cargar la imagen";
+			}
+
+			$data = array(
+				'nombre_img' => $user_img_profile,
+				'descripcion' => $informacionEquipo,
+				'idguia' => $this->last_id(),
+				'seccion' => 'partes'
+
+			);
+
+			$this->Generadorqr_model->insertAllPopUp($data);
+
+			redirect('cargarImagenes/?e=1');
 		}
-
-		$data = array(
-			'nombre_img' => $user_img_profile,
-			'descripcion' => $informacionEquipo,
-			'idguia' => $this->last_id(),
-			'seccion' => 'partes'
-
-		);
-
-		$this->Generadorqr_model->insertAllPopUp($data);
-
-		redirect('cargarImagenes/?e=1');
 	}
 
 
@@ -109,35 +170,68 @@ class GeneradorQR extends CI_Controller
 	{
 
 		$informacionEquipo = $this->input->post("FunctionamientoEquipo");
+		$nombreImagen = "";
+		if (empty($_FILES['imageInputFunciones']['name'])) {
+			$nombreImagen = "blanco.png";
+			$file_name = $nombreImagen;
+			$user_img_profile = $file_name;
+			$mi_archivo = 'imageInputFunciones';
+			$config['upload_path'] = 'uploads/partes';
+			// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size'] = '5000000';
+			$config['quality'] = '90%';
+			$config['file_name'] = $user_img_profile;
+			$this->load->library('upload', $config);
 
-		$ram = rand(1, 10000);
-		$file_name = $_FILES['imageInputFunciones']['name'];
-		$tmp = explode('.', $file_name);
-		$extension_img = end($tmp);
+			if (!$this->upload->do_upload($mi_archivo)) {
+				echo "se presento un error al cargar la imagen";
+			}
 
-		$user_img_profile = $ram . '.' . $extension_img;
+			$data = array(
+				'nombre_img' => $user_img_profile,
+				'descripcion' => $informacionEquipo,
+				'idguia' => $this->last_id(),
+				'seccion' => 'funciones'
 
-		$mi_archivo = 'imageInputFunciones';
-		$config['upload_path'] = 'uploads/funciones';
-		//'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
-		$config['allowed_types'] = 'gif|jpg|jpeg|png';
-		$config['max_size'] = '5000000';
-		$config['quality'] = '90%';
-		$config['file_name'] = $user_img_profile;
-		$this->load->library('upload', $config);
-		if (!$this->upload->do_upload($mi_archivo)) {
-			echo "se presento un error al cargar la imagen";
+			);
+
+			$this->Generadorqr_model->insertAllPopUp($data);
+
+			redirect('cargarImagenes/?e=1');
+		} else {
+			$ram = rand(1, 10000);
+			$file_name = $_FILES['imageInputFunciones']['name'];
+			$tmp = explode('.', $file_name);
+			$extension_img = end($tmp);
+
+			$user_img_profile = $ram . '.' . $extension_img;
+
+			$mi_archivo = 'imageInputFunciones';
+			$config['upload_path'] = 'uploads/partes';
+			// 'allowed_types' => "gif|jpg|jpeg|png|iso|dmg|zip|rar|doc|docx|xls|xlsx|ppt|pptx|csv|ods|odt|odp|pdf|rtf|sxc|sxi|txt|exe|avi|mpeg|mp3|mp4|3gp",
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size'] = '5000000';
+			$config['quality'] = '90%';
+			$config['file_name'] = $user_img_profile;
+			$this->load->library('upload', $config);
+
+			if (!$this->upload->do_upload($mi_archivo)) {
+				echo "se presento un error al cargar la imagen";
+			}
+
+			$data = array(
+				'nombre_img' => $user_img_profile,
+				'descripcion' => $informacionEquipo,
+				'idguia' => $this->last_id(),
+				'seccion' => 'funciones'
+
+			);
+
+			$this->Generadorqr_model->insertAllPopUp($data);
+
+			redirect('cargarImagenes/?e=1');
 		}
-
-		$data = array(
-			'nombre_img' => $user_img_profile,
-			'descripcion' => $informacionEquipo,
-			'idguia' => $this->last_id(),
-			'seccion' => 'funciones'
-		);
-
-		$this->Generadorqr_model->insertAllPopUp($data);
-		redirect('cargarImagenes/?e=1');
 	}
 
 
@@ -230,7 +324,7 @@ class GeneradorQR extends CI_Controller
 	{
 		$id = $this->last_id();
 		$urlQR = $this->generate_qrcode($id);
-		
+
 		$data = array(
 			'url_guia' => $urlQR
 		);
@@ -290,6 +384,10 @@ class GeneradorQR extends CI_Controller
 		$arrayFunciones = array();
 		$arrayPartes = array();
 
+		$imagenvaciaPrincipal = "";
+		$imagenvaciaPartes = "";
+		$imagenvaciaFunciones = "";
+
 
 		$informcionGeneral = $this->Generadorqr_model->generatePDF($id);
 
@@ -300,14 +398,34 @@ class GeneradorQR extends CI_Controller
 
 		$urlQR = base_url() . "public/qr/" . $informcionGeneral[0]->url_guia;
 
+		if (isset($imagenPrincipal[0]->nombre_img)) {
+			$imagenvaciaPrincipal = $imagenPrincipal[0]->nombre_img;
+		} else {
+			$imagenvaciaPrincipal = "blanco.png";
+		}
 
-		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenPrincipal[0]->nombre_img;
+
+		if (isset($imagenFunciones[0]->nombre_img)) {
+			$imagenvaciaFunciones = $imagenFunciones[0]->nombre_img;
+		} else {
+			$imagenvaciaFunciones = "blanco.png";
+		}
+
+
+		if (isset($imagenPartes[0]->nombre_img)) {
+			$imagenvaciaPartes = $imagenPartes[0]->nombre_img;
+		} else {
+			$imagenvaciaPartes = "blanco.png";
+		}
+
+
+		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenvaciaPrincipal;
 		$image_data = file_get_contents($image_path_principal);
 		$base64_image = base64_encode($image_data);
 		$result['imagenPrincipal'] = "data:image/jpg;base64," . $base64_image;
 
 		foreach ($imagenFunciones as $if) {
-			$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $if->nombre_img;
+			$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $imagenvaciaFunciones;
 			/* 	$image_data = file_get_contents($image_path_principal);
 			$base64_image = base64_encode($image_data);
 			$b64 = "data:image/jpg;base64," . $base64_image; */
@@ -315,7 +433,7 @@ class GeneradorQR extends CI_Controller
 		}
 
 		foreach ($imagenPartes as $ip) {
-			$image_path_partes = base_url() . "uploads/" . $partes . "/" . $ip->nombre_img;
+			$image_path_partes = base_url() . "uploads/" . $partes . "/" . $imagenvaciaPartes;
 			/* $image_data = file_get_contents($image_path_principal);
 			$base64_image = base64_encode($image_data);
 			$b64 = "data:image/jpg;base64," . $base64_image; */

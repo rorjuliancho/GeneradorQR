@@ -103,10 +103,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <form action="<?= base_url() ?>insertarimagenprincipal" method="post" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <label for="imagen">Por favor adjunta la imagen</label>
-                                    <input type="file" name="imageInput" class="file" accept="image/png, image/gif, image/jpeg">
-                                    <hr>
-                                    <label for="imagen">Información del equipo</label>
-                                    <textarea row="15" name="ImagenPrincipal" class="form-control"></textarea>
+                                    <input type="file" name="imageInput" required class="file" accept="image/png, image/gif, image/jpeg">
                                 </div>
 
                                 <center class="p-4">
@@ -135,7 +132,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <form action="<?= base_url() ?>insertarpartes" method="post" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <label for="imagen">Por favor adjunta la imagen</label>
-                                    <input type="file" name="imageInput" class="file" accept="image/png, image/gif, image/jpeg">
+                                    <input type="file" name="imageInputPartes" class="file" accept="image/png, image/gif, image/jpeg">
                                     <hr>
                                     <label for="imagen">Información del equipo</label>
                                     <textarea row="15" name="informacionEquipo" class="form-control"></textarea>
