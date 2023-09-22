@@ -151,6 +151,8 @@ class GeneradorQR extends CI_Controller
 		$notasFuncionamientoEquipo = $this->input->post('nota_funcionamiento');
 		$limpiezaEquipo = $this->input->post('limpiezaEquipo');
 
+		$biblioteca = $this->input->post('bibliotecaMedicamentos');
+
 		$notaLimpieza = $this->input->post('notaLimpieza');
 		date_default_timezone_set("America/Bogota");
 		$fechaCreacion = date('Y-m-d H:i:s');
@@ -158,10 +160,9 @@ class GeneradorQR extends CI_Controller
 			'nombre_equipo' => $nombreEquipo,
 			'descripcion' => $descripcion,
 			'advertencias' => $advertencias,
-			'nota_partes' => $notasPartesEquipo,
-			'nota_funcionamiento' => $notasFuncionamientoEquipo,
 			'limpieza' => $limpiezaEquipo,
 			'nota_limpieza' => $notaLimpieza,
+			'biblioteca_medicamentos' => $biblioteca,
 			'fecha_creacion' => $fechaCreacion
 		);
 
@@ -173,47 +174,47 @@ class GeneradorQR extends CI_Controller
 	/**
 	 * Esta funcion nos permite generar el código QR que va a estar visible en la guia de uso rápido
 	 */
-	function generate_qrcode()
+	function generate_qrcode($id)
 	{
-		for ($i = 1; $i <= 15; $i++) {
-			$this->load->library('ciqrcode');
-			//$data = base_url() . 'generarpdf/' . $id;
-			$data = "https://jagesint.com/guiadeusorapido/generarpdf/" . $i;
-			/* Data */
-			#$hex_data   = bin2hex($data);
-			$save_name  = "GMREM-" . $i . '.png';
 
-			/* QR Code File Directory Initialize */
-			$dir = 'public/qr/';
-			if (!file_exists($dir)) {
-				mkdir($dir, 0775, true);
-			}
+		$this->load->library('ciqrcode');
+		//$data = base_url() . 'generarpdf/' . $id;
+		$data = "https://jagesint.com/guiadeusorapido/Welcome/generarpdf/" . $id;
+		/* Data */
+		#$hex_data   = bin2hex($data);
+		$save_name  = "GMREM-" . $id . '.png';
 
-			/* QR Configuration  */
-			$config['cacheable']    = true;
-			$config['imagedir']     = $dir;
-			$config['quality']      = true;
-			$config['size']         = '1024';
-			$config['black']        = array(255, 255, 255);
-			$config['white']        = array(255, 255, 255);
-			$this->ciqrcode->initialize($config);
-
-			/* QR Data  */
-			$params['data']     = $data;
-			$params['level']    = 'L';
-			$params['size']     = 10;
-			$params['savename'] = FCPATH . $config['imagedir'] . $save_name;
-
-			$this->ciqrcode->generate($params);
-
-			/* Return Data */
-			$return = array(
-				'content' => $data,
-				'file'    => $dir . $save_name
-			);
+		/* QR Code File Directory Initialize */
+		$dir = 'public/qr/';
+		if (!file_exists($dir)) {
+			mkdir($dir, 0775, true);
 		}
 
-		//return $save_name;
+		/* QR Configuration  */
+		$config['cacheable']    = true;
+		$config['imagedir']     = $dir;
+		$config['quality']      = true;
+		$config['size']         = '1024';
+		$config['black']        = array(255, 255, 255);
+		$config['white']        = array(255, 255, 255);
+		$this->ciqrcode->initialize($config);
+
+		/* QR Data  */
+		$params['data']     = $data;
+		$params['level']    = 'L';
+		$params['size']     = 10;
+		$params['savename'] = FCPATH . $config['imagedir'] . $save_name;
+
+		$this->ciqrcode->generate($params);
+
+		/* Return Data */
+		$return = array(
+			'content' => $data,
+			'file'    => $dir . $save_name
+		);
+
+
+		return $save_name;
 	}
 
 
@@ -228,9 +229,8 @@ class GeneradorQR extends CI_Controller
 	public function GuardarInformacion()
 	{
 		$id = $this->last_id();
-
 		$urlQR = $this->generate_qrcode($id);
-
+		
 		$data = array(
 			'url_guia' => $urlQR
 		);
@@ -290,12 +290,12 @@ class GeneradorQR extends CI_Controller
 		$arrayFunciones = array();
 		$arrayPartes = array();
 
+
 		$informcionGeneral = $this->Generadorqr_model->generatePDF($id);
 
 		$imagenPrincipal = $this->Generadorqr_model->generatePDFImage($id, $principal);
 		$imagenFunciones = $this->Generadorqr_model->generatePDFImage($id, $funciones);
 		$imagenPartes = $this->Generadorqr_model->generatePDFImage($id, $partes);
-
 
 
 		$urlQR = base_url() . "public/qr/" . $informcionGeneral[0]->url_guia;
@@ -330,6 +330,7 @@ class GeneradorQR extends CI_Controller
 			$nota_funcionamiento = $ig->nota_funcionamiento;
 			$limpieza = $ig->limpieza;
 			$nota_limpieza = $ig->nota_limpieza;
+			$biblioteca_medicamentos = $ig->biblioteca_medicamentos;
 		}
 
 
@@ -341,6 +342,7 @@ class GeneradorQR extends CI_Controller
 		<style>
 		table{
 			text-align:center;
+			width:100%;
 		}
 
 		.p-3{
@@ -357,10 +359,15 @@ class GeneradorQR extends CI_Controller
 		img{
 			width:400px;
 		}
+
+		.text-center{
+			text-align:center;
+		}
+
 		</style>
-		<table width="100%">
+		<table>
 		<tr class="p-3">
-			<td align="center">
+			<td>
 				<h1 >
 				<br>
 				$nombre_equipo
@@ -374,10 +381,10 @@ class GeneradorQR extends CI_Controller
 		<td><img src="$image_path_principal"  /></td>
 		</tr>
 		<tr>
-			<td align="center">
+			<td align="left">
 				<h3>
 				<br>
-				$descripcion
+					$descripcion
 				<br>
 				</h3>
 			</td>
@@ -389,14 +396,14 @@ class GeneradorQR extends CI_Controller
 				<br>
 				<strong>ADVERTENCIA</strong>
 				<br>
-				$advertencias
+					<span>$advertencias</span>
 				<br>
 				</h3>
 			</td>
 		</tr>
 
 		<tr>
-			<td align="center">
+			<td align="left">
 				<h3>
 				<br>
 				En esta guía se muestra la información básica para hacer uso adecuado del equipo, si requiere mayor información comuníquese al (310) 552-4551
@@ -405,82 +412,34 @@ class GeneradorQR extends CI_Controller
 			</td>
 		</tr>
 
-		<tr>
-			<td align="center">
-				<h2>
-				<br>
-				FUNCIONES
-				<br>
-				</h2>
-			</td>
-		</tr>
 	</table>
 EOD;
 		$pdf->writeHTML($html0, true, false, false, false, '');
 
+		$pdf->AddPage('A4');
 
-		for ($i = 0; $i < count($arrayFunciones); $i++) {
-			if ($i % 2 == 0) {
-				$html1 = <<<EOD
-				<style>
+		$htmlPartes = <<<EOD
+		<style>
 				table{
-					text-align:center !important;
+					text-align:center;
 				}
+
 				img{
 					width:500px;
 				}
-				.text-center {
-					text-align: center !important;
-				}
-				</style>
-				<table >
-				<tr class="text-center">
-					<td align="center"><img src="$arrayFunciones[$i]" /></td>
-				</tr>
-				</table>
-EOD;
-				$pdf->writeHTML($html1, true, false, false, false, '');
-			} else {
-				$html1 = <<<EOD
-				<style>
-				table{
-					text-align:center;
-				}
 
 				</style>
-				<table>
-				<tr>
+			<table>
+			<tr>
 				<td>
-					<h3>$arrayFunciones[$i]</h3>
-					</td>
-					</tr>
-				</table>
-				EOD;
-				$pdf->writeHTML($html1, true, false, false, false, '');
-			}
-		}
-
-
-		$pdf->ln(10);
-		$htmlPartes = <<<EOD
-				<style>
-				table{
-					text-align:center;
-					
-				}
-
-				</style>
-				<table >
-				<tr>
-				<td>
-					<h2><strong>PARTES</strong></h2>
-					</td>
-					</tr>
-				</table>
-				EOD;
+				<h2>PARTES</h2>
+				</td>
+			</tr>
+			</table>
+		EOD;
 		$pdf->writeHTML($htmlPartes, true, false, false, false, '');
-
 		for ($i = 0; $i < count($arrayPartes); $i++) {
+
 			if ($i % 2 == 0) {
 				$html2 = <<<EOD
 				<style>
@@ -490,15 +449,15 @@ EOD;
 				}
 
 				img{
-					width:400px;
+					width:500px;
 				}
 
 				</style>
-<table>
-<tr>
-    <td><img src="$arrayPartes[$i]"  /></td>
-</tr>
-</table>
+				<table>
+				<tr>
+					<td><img src="$arrayPartes[$i]"  /></td>
+				</tr>
+				</table>
 EOD;
 				$pdf->writeHTML($html2, true, false, false, false, '');
 			} else {
@@ -506,13 +465,12 @@ EOD;
 				<style>
 				table{
 					text-align:center;
-					
 				}
 
 				</style>
 				<table >
 				<tr>
-				<td>
+				<td align="left">
 					<h3>$arrayPartes[$i]</h3>
 					</td>
 					</tr>
@@ -521,6 +479,108 @@ EOD;
 				$pdf->writeHTML($html2, true, false, false, false, '');
 			}
 		}
+
+		$pdf->AddPage('A4');
+
+		$html2 = <<<EOD
+				<style>
+				table{
+					text-align:center;
+				}
+
+				</style>
+				<table >
+				<tr>
+				<td align="center">
+					<h2>FUNCIONES</h2>
+					</td>
+					</tr>
+				</table>
+				EOD;
+		$pdf->writeHTML($html2, true, false, false, false, '');
+
+
+
+		for ($i = 0; $i < count($arrayFunciones); $i++) {
+			if ($i % 2 == 0) {
+				$htmlFuncionesImagen = <<<EOD
+				<style>
+				table{
+					text-align:center !important;
+				}
+				img{
+					width:700px;
+				}
+				.text-center {
+					text-align: center !important;
+				}
+				</style>
+				<table >
+				<tr class="text-center">
+					<td align="center" ><img src="$arrayFunciones[$i]" /></td>
+				</tr>
+				</table>
+EOD;
+				$pdf->writeHTML($htmlFuncionesImagen, true, false, false, false, '');
+			} else {
+				$htmlDecripcionFunciones = <<<EOD
+				<style>
+				table{
+					text-align:center;
+				}
+
+				</style>
+				<table>
+				<tr>
+				<td align="left">
+					<h3>$arrayFunciones[$i]</h3>
+				</td>
+				</tr>
+				</table>
+				EOD;
+				$pdf->writeHTML($htmlDecripcionFunciones, true, false, false, false, '');
+			}
+		}
+
+
+		if (isset($biblioteca_medicamentos)) {
+			$pdf->AddPage('A4');
+			$htmlmedicamentos = <<<EOD
+		<style>
+		table{
+			text-align:center;
+			
+		}
+		</style>
+		<table   width="100%">
+		<tr class="p-3">
+			<td align="center">
+				<h2 >
+				<br>
+				BIBLIOTECA DE MEDICAMENTOS
+				<br>
+				<br>
+				</h2>
+
+			</td>
+		</tr>
+		<tr class="p-3">
+			<td align="left">
+				<h3 >
+				<br>
+				$biblioteca_medicamentos
+				<br>
+				<br>
+				</h3>
+
+			</td>
+		</tr>
+		</table>
+	
+EOD;
+			$pdf->writeHTML($htmlmedicamentos, true, false, false, false, '');
+		}
+
 
 		$html3 = <<<EOD
 		<style>
@@ -541,31 +601,31 @@ EOD;
 			background-color:#FCFF00;
 		}
 		</style>
+		
+		
 		<table   width="100%">
-		<tr class="p-3">
+		<tr>
 			<td align="center">
-				<h3 >
+				<h2>
 				<br>
-				$nota_partes
+				LIMPIEZA Y DESINFECCION
 				<br>
-				<br>
-				</h3>
-
+				</h2>
 			</td>
 		</tr>
 		
 		<tr>
-			<td align="center">
+			<td align="left">
 				<h3>
 				<br>
-				$nota_funcionamiento
+				$limpieza
 				<br>
 				</h3>
 			</td>
 		</tr>
 
 		<tr>
-			<td align="center">
+			<td align="left">
 				<h3>
 				<br>
 				$nota_limpieza

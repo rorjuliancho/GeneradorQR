@@ -49,7 +49,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
           </div>
 
 
-          <div class="form-group">
+          <!--  <div class="form-group">
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label for="">
@@ -65,14 +65,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
               </div>
             </div>
           </div>
-
+ -->
           <div class="form-group">
             <div class="form-row ">
-              <div class="form-group col-md-12">
+              <div class="form-group col-md-6">
                 <h4>Limpieza y desinfección</h4>
                 <textarea rows="5" name="limpiezaEquipo" type="text" class="form-control" required placeholder="Agrega la información de limpieza y desinfección del equipo"></textarea>
                 <label for="inputAddress">Nota</label>
                 <textarea rows="3" name="notaLimpieza" type="text" class="form-control" required></textarea>
+              </div>
+              <div class="form-group col-md-6">
+                <h4>Biblioteca de Medicamentos</h4>
+                <textarea rows="5" name="bibliotecaMedicamentos" type="text" class="form-control" placeholder="Agrega la información de la biblioteca de medicamentos"></textarea>
+                <label for="inputAddress">Nota</label>
+                <textarea rows="3" name="notaLimpieza" type="text" class="form-control"></textarea>
               </div>
             </div>
           </div>
