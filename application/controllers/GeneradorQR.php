@@ -399,16 +399,14 @@ class GeneradorQR extends CI_Controller
 
 		$urlQR = base_url() . "public/qr/" . $informcionGeneral[0]->url_guia;
 
-		/* 	if (isset($imagenPrincipal[0]->nombre_img)) {
+		if (isset($imagenPrincipal[0]->nombre_img)) {
 			$imagenvaciaPrincipal = $imagenPrincipal[0]->nombre_img;
 		} else {
 			$imagenvaciaPrincipal = "blanco.png";
-		} */
+		}
 
-		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenPrincipal[0]->nombre_img;
-		/* $image_data = file_get_contents($image_path_principal);
-		$base64_image = base64_encode($image_data);
-		$result['imagenPrincipal'] = "data:image/jpg;base64," . $base64_image; */
+		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenvaciaPrincipal;
+
 
 		foreach ($imagenPartes as $ip) {
 			if (isset($ip->nombre_img)) {
@@ -416,13 +414,7 @@ class GeneradorQR extends CI_Controller
 			} else {
 				$imagenvaciaPartes = "blanco.png";
 			}
-			//$image_path_partes = base_url() . "uploads/" . $partes . "/" . $imagenvaciaPartes;
-			$image_path_partes = base_url() . "uploads/p/" . $imagenvaciaPartes;
-
-
-			/* $image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpg;base64," . $base64_image; */
+			$image_path_partes = base_url() . "uploads/" . $partes . "/" . $imagenvaciaPartes;
 			array_push($arrayPartes, $image_path_partes, $ip->descripcion);
 		}
 
@@ -433,13 +425,7 @@ class GeneradorQR extends CI_Controller
 				$imagenvaciaFunciones = "blanco.png";
 			}
 
-			//$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $imagenvaciaFunciones;
-			$image_path_funciones = base_url() . "uploads/f/" . $imagenvaciaFunciones;
-
-
-			/* 	$image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpg;base64," . $base64_image; */
+			$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $imagenvaciaFunciones;
 			array_push($arrayFunciones, $image_path_funciones, $if->descripcion);
 		}
 
@@ -449,8 +435,6 @@ class GeneradorQR extends CI_Controller
 			$nombre_equipo = $ig->nombre_equipo;
 			$descripcion = $ig->descripcion;
 			$advertencias = $ig->advertencias;
-			$nota_partes = $ig->nota_partes;
-			$nota_funcionamiento = $ig->nota_funcionamiento;
 			$limpieza = $ig->limpieza;
 			$nota_limpieza = $ig->nota_limpieza;
 			$biblioteca_medicamentos = $ig->biblioteca_medicamentos;
@@ -887,6 +871,6 @@ EOD;
 EOD;
 		$pdf->writeHTML($htmlQr, true, false, false, false, '');
 
-		$pdf->Output('GUÍA DE MANEJO RÁPIDO DE EQUIPOS MÉDICOS.pdf', 'I');
+		$pdf->Output('GMREP.pdf', 'I');
 	}
 }
