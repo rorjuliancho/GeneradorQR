@@ -28,8 +28,8 @@ class MYPDF extends TCPDF
 	{
 		$this->SetFont('helvetica', '', 6);		
 		#$this->Line(10, 279, 195, 279);
-		$image_file2 = base_url().'public/img/footer.png';							 
-        $this->Image($image_file2, 50, 272, 90, '', 'png', '', 'T', false, 300, '', false, false, 0, false, false, false);		
+		$image_file2 = base_url().'public/img/footerd.png';							 
+        $this->Image($image_file2, 10, 272 ,170,25, 'png', '', 'T', false, 300, '', false, false, 0, false, false, false);		
 		$this->writeHTMLCell(100, 100, 150, 280, '', 0, 1, 0, true, 'C', true);	
 }
 }

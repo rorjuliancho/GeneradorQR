@@ -381,6 +381,7 @@ class GeneradorQR extends CI_Controller
 		$principal = "principal";
 		$funciones = "funciones";
 		$partes = "partes";
+
 		$arrayFunciones = array();
 		$arrayPartes = array();
 
@@ -398,47 +399,51 @@ class GeneradorQR extends CI_Controller
 
 		$urlQR = base_url() . "public/qr/" . $informcionGeneral[0]->url_guia;
 
-		if (isset($imagenPrincipal[0]->nombre_img)) {
+		/* 	if (isset($imagenPrincipal[0]->nombre_img)) {
 			$imagenvaciaPrincipal = $imagenPrincipal[0]->nombre_img;
 		} else {
 			$imagenvaciaPrincipal = "blanco.png";
-		}
+		} */
 
-
-		if (isset($imagenFunciones[0]->nombre_img)) {
-			$imagenvaciaFunciones = $imagenFunciones[0]->nombre_img;
-		} else {
-			$imagenvaciaFunciones = "blanco.png";
-		}
-
-
-		if (isset($imagenPartes[0]->nombre_img)) {
-			$imagenvaciaPartes = $imagenPartes[0]->nombre_img;
-		} else {
-			$imagenvaciaPartes = "blanco.png";
-		}
-
-
-		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenvaciaPrincipal;
-		$image_data = file_get_contents($image_path_principal);
+		$image_path_principal = base_url() . "uploads/" . $principal . "/" . $imagenPrincipal[0]->nombre_img;
+		/* $image_data = file_get_contents($image_path_principal);
 		$base64_image = base64_encode($image_data);
-		$result['imagenPrincipal'] = "data:image/jpg;base64," . $base64_image;
+		$result['imagenPrincipal'] = "data:image/jpg;base64," . $base64_image; */
+
+		foreach ($imagenPartes as $ip) {
+			if (isset($ip->nombre_img)) {
+				$imagenvaciaPartes = $ip->nombre_img;
+			} else {
+				$imagenvaciaPartes = "blanco.png";
+			}
+			//$image_path_partes = base_url() . "uploads/" . $partes . "/" . $imagenvaciaPartes;
+			$image_path_partes = base_url() . "uploads/p/" . $imagenvaciaPartes;
+
+
+			/* $image_data = file_get_contents($image_path_principal);
+			$base64_image = base64_encode($image_data);
+			$b64 = "data:image/jpg;base64," . $base64_image; */
+			array_push($arrayPartes, $image_path_partes, $ip->descripcion);
+		}
 
 		foreach ($imagenFunciones as $if) {
-			$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $imagenvaciaFunciones;
+			if (isset($if->nombre_img)) {
+				$imagenvaciaFunciones = $if->nombre_img;
+			} else {
+				$imagenvaciaFunciones = "blanco.png";
+			}
+
+			//$image_path_funciones = base_url() . "uploads/" . $funciones . "/" . $imagenvaciaFunciones;
+			$image_path_funciones = base_url() . "uploads/f/" . $imagenvaciaFunciones;
+
+
 			/* 	$image_data = file_get_contents($image_path_principal);
 			$base64_image = base64_encode($image_data);
 			$b64 = "data:image/jpg;base64," . $base64_image; */
 			array_push($arrayFunciones, $image_path_funciones, $if->descripcion);
 		}
 
-		foreach ($imagenPartes as $ip) {
-			$image_path_partes = base_url() . "uploads/" . $partes . "/" . $imagenvaciaPartes;
-			/* $image_data = file_get_contents($image_path_principal);
-			$base64_image = base64_encode($image_data);
-			$b64 = "data:image/jpg;base64," . $base64_image; */
-			array_push($arrayPartes, $image_path_partes, $ip->descripcion);
-		}
+
 
 		foreach ($informcionGeneral as $ig) {
 			$nombre_equipo = $ig->nombre_equipo;
@@ -495,11 +500,60 @@ class GeneradorQR extends CI_Controller
 
 			</td>
 		</tr>
-		<tr  class="p-3">
-		<td><img src="$image_path_principal"  /></td>
-		</tr>
+		</table>
+		EOD;
+		$pdf->writeHTML($html0, true, false, false, false, '');
+
+		if (empty($imagenPrincipal[0]->nombre_img)) {
+			$htmlvacio = <<<EOD
+				<table>
+				<tr class="p-3">
+				<td></td>
+				</tr>
+				</table>
+		EOD;
+			$pdf->writeHTML($htmlvacio, true, false, false, false, '');
+		} else {
+			$htmlImgenPrincipal = <<<EOD
+			<table>
+			<tr  class="p-3">
+			<td><img src="$image_path_principal"  /></td>
+			</tr>
+			</table>
+			EOD;
+			$pdf->writeHTML($htmlImgenPrincipal, true, false, false, false, '');
+		}
+
+		$htmlDes = <<<EOD
+		<style>
+		table{
+			text-align:center;
+			width:100%;
+		}
+
+		.p-3{
+			padding: 14px;
+		}
+
+		.m-3{
+			margin-top:20px;
+			margin-buttom:20px;
+		}
+		.warning{
+			background-color:#FCFF00;
+		}
+		img{
+			width:400px;
+		}
+
+		.text-center{
+			text-align:center;
+		}
+
+		</style>
+		<table>
 		<tr>
-			<td align="left">
+			<td align="justify">
 				<h3>
 				<br>
 					$descripcion
@@ -513,10 +567,10 @@ class GeneradorQR extends CI_Controller
 				<h3>
 				<br>
 				<strong>ADVERTENCIA</strong>
-				<br>
-					<span>$advertencias</span>
-				<br>
 				</h3>
+				<br>
+				<h3><span>$advertencias</span></h3>
+				<br>
 			</td>
 		</tr>
 
@@ -532,7 +586,7 @@ class GeneradorQR extends CI_Controller
 
 	</table>
 EOD;
-		$pdf->writeHTML($html0, true, false, false, false, '');
+		$pdf->writeHTML($htmlDes, true, false, false, false, '');
 
 		$pdf->AddPage('A4');
 
@@ -556,51 +610,82 @@ EOD;
 			</table>
 		EOD;
 		$pdf->writeHTML($htmlPartes, true, false, false, false, '');
+		$pdf->Ln(10);
 		for ($i = 0; $i < count($arrayPartes); $i++) {
-
 			if ($i % 2 == 0) {
-				$html2 = <<<EOD
-				<style>
-				table{
-					text-align:center;
-					
-				}
+				if (empty($arrayPartes[$i])) {
+					$htmlImagenPartes = <<<EOD
+					<style>
+					table{
+						text-align:center;
+					}
+	
+					img{
+						width:300px;
+					}
+					ul li{
+					list-style:none;
+					}
+					</style>
+					<table>
+					<tr>
+						<td>
+						</td>
+					</tr>
+					</table>
+				EOD;
+					$pdf->writeHTML($htmlImagenPartes, true, false, false, false, '');
+				} else {
 
-				img{
-					width:500px;
-				}
+					$htmlImagenPartes = <<<EOD
+					<style>
+					table{
+						text-align:center;
+					}
+	
+					img{
+						width:300px;
+					}
+					ul li{
+					list-style:none;
+					}
+					</style>
+					<table>
+					<tr>
+						<td>
+						<img src="$arrayPartes[$i]"/>
+						</td>
+					</tr>
+					</table>
+				EOD;
 
-				</style>
-				<table>
-				<tr>
-					<td><img src="$arrayPartes[$i]"  /></td>
-				</tr>
-				</table>
-EOD;
-				$pdf->writeHTML($html2, true, false, false, false, '');
+					$pdf->writeHTML($htmlImagenPartes, true, false, false, false, 'C');
+				}
 			} else {
-				$html2 = <<<EOD
+				$htmlTextoPartes = <<<EOD
 				<style>
 				table{
 					text-align:center;
 				}
-
+				ul li{
+					list-style:none;
+				}
 				</style>
 				<table >
 				<tr>
-				<td align="left">
+				<td align="justify">
 					<h3>$arrayPartes[$i]</h3>
 					</td>
 					</tr>
 				</table>
 				EOD;
-				$pdf->writeHTML($html2, true, false, false, false, '');
+				$pdf->writeHTML($htmlTextoPartes, true, false, false, false, '');
 			}
 		}
 
 		$pdf->AddPage('A4');
 
-		$html2 = <<<EOD
+		$htmlFunciones = <<<EOD
 				<style>
 				table{
 					text-align:center;
@@ -615,13 +700,14 @@ EOD;
 					</tr>
 				</table>
 				EOD;
-		$pdf->writeHTML($html2, true, false, false, false, '');
+		$pdf->writeHTML($htmlFunciones, true, false, false, false, '');
 
 
 
 		for ($i = 0; $i < count($arrayFunciones); $i++) {
 			if ($i % 2 == 0) {
-				$htmlFuncionesImagen = <<<EOD
+				if (empty($arrayFunciones[$i])) {
+					$htmlFuncionesImagen = <<<EOD
 				<style>
 				table{
 					text-align:center !important;
@@ -633,13 +719,32 @@ EOD;
 					text-align: center !important;
 				}
 				</style>
-				<table >
-				<tr class="text-center">
-					<td align="center" ><img src="$arrayFunciones[$i]" /></td>
-				</tr>
+				<table>
+				
 				</table>
 EOD;
-				$pdf->writeHTML($htmlFuncionesImagen, true, false, false, false, '');
+					$pdf->writeHTML($htmlFuncionesImagen, true, false, false, false, '');
+				} else {
+					$htmlFuncionesImagen = <<<EOD
+					<style>
+					table{
+						text-align:center !important;
+					}
+					img{
+						width:500px;
+					}
+					.text-center {
+						text-align: center !important;
+					}
+					</style>
+					<table >
+					<tr class="text-center">
+						<td align="center" ><img src="$arrayFunciones[$i]" /></td>
+					</tr>
+					</table>
+	EOD;
+					$pdf->writeHTML($htmlFuncionesImagen, true, false, false, false, '');
+				}
 			} else {
 				$htmlDecripcionFunciones = <<<EOD
 				<style>
@@ -650,7 +755,7 @@ EOD;
 				</style>
 				<table>
 				<tr>
-				<td align="left">
+				<td align="justify">
 					<h3>$arrayFunciones[$i]</h3>
 				</td>
 				</tr>
@@ -683,7 +788,7 @@ EOD;
 			</td>
 		</tr>
 		<tr class="p-3">
-			<td align="left">
+			<td align="justify">
 				<h3 >
 				<br>
 				$biblioteca_medicamentos
@@ -704,7 +809,6 @@ EOD;
 		<style>
 		table{
 			text-align:center;
-			
 		}
 
 		.p-3{
@@ -733,7 +837,7 @@ EOD;
 		</tr>
 		
 		<tr>
-			<td align="left">
+			<td align="justify">
 				<h3>
 				<br>
 				$limpieza
@@ -743,7 +847,7 @@ EOD;
 		</tr>
 
 		<tr>
-			<td align="left">
+			<td align="justify">
 				<h3>
 				<br>
 				$nota_limpieza
