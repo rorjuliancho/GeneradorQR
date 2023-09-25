@@ -13,23 +13,40 @@ class GeneradorQR extends CI_Controller
 		$this->load->library('tcpdf');
 	}
 
+	/**
+	 *  Funcion donde se muestra la tabla con todos los registros de las guías
+	 * 
+	 */
 	public function index()
 	{
 		$result['informacion'] = $this->Generadorqr_model->informacion();
 		$this->load->view('informacion', $result);
 	}
 
+	/**
+	 *  Funcion donde se muestra la interfaz para cargar las imágenes
+	 * 
+	 */
 	public function cargarImagenes()
 	{
 		$lastId = $this->last_id();
 		$this->load->view('cargarimagenes', $lastId);
 	}
-
+	/**
+	 *  Funcion para mostrar la interfaz para crera la guía
+	 * 
+	 */
 	public function crearguia()
 	{
 
 		$this->load->view('generadorqr');
 	}
+
+
+	/**
+	 *  Funcion que se utiliza para guardar la información de la imágen principal
+	 * 
+	 */
 
 	public function insertarimagenprincipal()
 	{
@@ -98,6 +115,12 @@ class GeneradorQR extends CI_Controller
 		}
 	}
 
+	/**
+	 *  Funcion que se utiliza para guardar la información de las partes de la guía
+	 * 
+	 */
+
+
 	public function insertarpartes()
 	{
 		$nombreImagen = "";
@@ -165,11 +188,15 @@ class GeneradorQR extends CI_Controller
 		}
 	}
 
-
+	/**
+	 *  Funcion que se utiliza para guardar la información de las funciones de la guía
+	 * 
+	 */
 	public function insertarFunciones()
 	{
 
 		$informacionEquipo = $this->input->post("FunctionamientoEquipo");
+
 		$nombreImagen = "";
 		if (empty($_FILES['imageInputFunciones']['name'])) {
 			$nombreImagen = "blanco.png";
@@ -234,7 +261,10 @@ class GeneradorQR extends CI_Controller
 		}
 	}
 
-
+	/**
+	 *  Funcion que se utiliza para guardar los registros principales de la guia
+	 * 
+	 */
 	public function insertarAllData()
 	{
 		$nombreEquipo = $this->input->post('nombreEquipo');
@@ -320,6 +350,9 @@ class GeneradorQR extends CI_Controller
 		return $last_id;
 	}
 
+	/**
+	 *  Funcion que se utiliza para crear la guia
+	 */
 	public function GuardarInformacion()
 	{
 		$id = $this->last_id();
@@ -334,7 +367,9 @@ class GeneradorQR extends CI_Controller
 
 		redirect('');
 	}
-
+	/**
+	 *  Funcion que se utiliza para generar el pdf de la guía
+	 */
 	public function generarpdf($id)
 	{
 		$this->load->library('MYPDF');
@@ -667,7 +702,7 @@ EOD;
 			}
 		}
 
-		$pdf->AddPage('A4');
+		#$pdf->AddPage('A4');
 
 		$htmlFunciones = <<<EOD
 				<style>
@@ -685,7 +720,7 @@ EOD;
 				</table>
 				EOD;
 		$pdf->writeHTML($htmlFunciones, true, false, false, false, '');
-
+		$pdf->Ln(10);
 
 
 		for ($i = 0; $i < count($arrayFunciones); $i++) {
@@ -708,6 +743,7 @@ EOD;
 				</table>
 EOD;
 					$pdf->writeHTML($htmlFuncionesImagen, true, false, false, false, '');
+					$pdf->Ln(10);
 				} else {
 					$htmlFuncionesImagen = <<<EOD
 					<style>
