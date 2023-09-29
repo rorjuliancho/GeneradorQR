@@ -401,7 +401,7 @@ class GeneradorQR extends CI_Controller
 		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
 		// set auto page breaks
-		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+		#$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
 		// set image scale factor
 		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
@@ -411,7 +411,6 @@ class GeneradorQR extends CI_Controller
 			require_once(dirname(__FILE__) . '/lang/eng.php');
 			$pdf->setLanguageArray($l);
 		}
-
 
 		$principal = "principal";
 		$funciones = "funciones";
@@ -476,12 +475,14 @@ class GeneradorQR extends CI_Controller
 		}
 
 
+
 		$pdf->SetFont('helvetica', 'R', 9);
+
 		$pdf->AddPage('A4');
 
-		/** nombre de la guia   */
 		$html0 = <<<EOD
 		<style>
+		
 		table{
 			text-align:center;
 			width:100%;
@@ -506,9 +507,17 @@ class GeneradorQR extends CI_Controller
 			text-align:center;
 		}
 
+		tr{
+			background-color:#fff;
+		}
+
+		td{
+			background-color:#fff;
+		}
+
 		</style>
 		<table>
-		<tr class="p-3">
+		<tr class="p-3" >
 			<td>
 				<h1 >
 				<br>
@@ -521,7 +530,10 @@ class GeneradorQR extends CI_Controller
 		</tr>
 		</table>
 		EOD;
+
+
 		$pdf->writeHTML($html0, true, false, false, false, '');
+
 
 		if (empty($imagenPrincipal[0]->nombre_img)) {
 			$htmlvacio = <<<EOD
@@ -572,7 +584,7 @@ class GeneradorQR extends CI_Controller
 		</style>
 		<table>
 		<tr>
-			<td align="justify">
+			<td align="justify" style="background-color:#fff">
 				<h3>
 				<br>
 					$descripcion
@@ -702,8 +714,8 @@ EOD;
 			}
 		}
 
-		#$pdf->AddPage('A4');
-
+		$pdf->AddPage('A4');
+		$pdf->Ln(20);
 		$htmlFunciones = <<<EOD
 				<style>
 				table{
@@ -720,7 +732,7 @@ EOD;
 				</table>
 				EOD;
 		$pdf->writeHTML($htmlFunciones, true, false, false, false, '');
-		$pdf->Ln(10);
+
 
 
 		for ($i = 0; $i < count($arrayFunciones); $i++) {
@@ -743,7 +755,7 @@ EOD;
 				</table>
 EOD;
 					$pdf->writeHTML($htmlFuncionesImagen, true, false, false, false, '');
-					$pdf->Ln(10);
+					$pdf->Ln(20);
 				} else {
 					$htmlFuncionesImagen = <<<EOD
 					<style>
@@ -880,7 +892,7 @@ EOD;
 	</table>
 EOD;
 		$pdf->writeHTML($html3, true, false, false, false, '');
-
+		$pdf->AddPage('A4');
 		$htmlQr = <<<EOD
 		<style>
 		table{
