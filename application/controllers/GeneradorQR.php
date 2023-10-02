@@ -921,4 +921,154 @@ EOD;
 
 		$pdf->Output('GMREP.pdf', 'I');
 	}
+
+	public function editarGuia($id)
+	{
+
+		$result['guiaGeneral'] = $this->Generadorqr_model->encontrarGuiaId($id);
+		$result['encontrarGuiaIdPrincipal'] = $this->Generadorqr_model->encontrarGuiaIdPrincipal($id);
+		$result['encontrarGuiaIdPartes'] = $this->Generadorqr_model->encontrarGuiaIdPartes($id);
+		$result['encontrarGuiaIdFunciones'] = $this->Generadorqr_model->encontrarGuiaIdFunciones($id);
+
+		$this->load->view('editarGuia', $result);
+	}
+
+	public function updateGuia()
+	{
+		$idGuia = $this->input->post('idGuia');
+		$nombreEquipo = $this->input->post('nombreEquipo');
+		$descripcion = $this->input->post('descripcion');
+		$advertencias = $this->input->post('advertencias');
+		$limpiezaEquipo = $this->input->post('limpiezaEquipo');
+		$notaLimpieza = $this->input->post('notaLimpieza');
+		$bibliotecaMedicamentos = $this->input->post('bibliotecaMedicamentos');
+
+		$data = array(
+			'nombre_equipo' => $nombreEquipo,
+			'descripcion' => $descripcion,
+			'advertencias' => $advertencias,
+			'limpieza' => $limpiezaEquipo,
+			'nota_limpieza' => $notaLimpieza,
+			'biblioteca_medicamentos' => $bibliotecaMedicamentos
+		);
+
+		$this->Generadorqr_model->updateInformacionGuia($data, $idGuia);
+		redirect('editarGuia/' . $idGuia . '?e=1');
+	}
+
+
+	public function updateImagenPrincipal()
+	{
+		$idImagen = $this->input->post('idImagen');
+		$idGuia = $this->input->post('idGuia');
+
+
+		$ram = rand(1, 10000);
+		$file_name = $_FILES['imageInput']['name'];
+		$tmp = explode('.', $file_name);
+		$extension_img = end($tmp);
+
+		$user_img_profile = $ram . '.' . $extension_img;
+
+		$mi_archivo = 'imageInput';
+		$config['upload_path'] = 'uploads/principal';
+		$config['allowed_types'] = 'gif|jpg|jpeg|png';
+		$config['max_size'] = '5000000';
+		$config['quality'] = '90%';
+		$config['file_name'] = $user_img_profile;
+		$this->load->library('upload', $config);
+
+		if (!$this->upload->do_upload($mi_archivo)) {
+			echo "se presento un error al cargar la imagen";
+		}
+
+		$data = array(
+			'nombre_img' => $user_img_profile,
+		);
+
+		$this->Generadorqr_model->updateImagenesGuia($data, $idImagen);
+
+		redirect('editarGuia/' . $idGuia . '?e=1');
+	}
+
+
+	public function updateImagenPartes()
+	{
+		$idImagen = $this->input->post('idImagen');
+		$idGuia = $this->input->post('idGuia');
+		$informacionEquipo = $this->input->post('informacionEquipo');
+
+		$ram = rand(1, 10000);
+		$file_name = $_FILES['imageInputPartes']['name'];
+		$tmp = explode('.', $file_name);
+		$extension_img = end($tmp);
+
+		$user_img_profile = $ram . '.' . $extension_img;
+
+		$mi_archivo = 'imageInputPartes';
+		$config['upload_path'] = 'uploads/partes';
+		$config['allowed_types'] = 'gif|jpg|jpeg|png';
+		$config['max_size'] = '5000000';
+		$config['quality'] = '90%';
+		$config['file_name'] = $user_img_profile;
+		$this->load->library('upload', $config);
+
+		if (!$this->upload->do_upload($mi_archivo)) {
+			echo "se presento un error al cargar la imagen";
+		}
+
+		$data = array(
+			'nombre_img' => $user_img_profile,
+			'descripcion' => $informacionEquipo,
+		);
+
+		$this->Generadorqr_model->updateImagenesGuia($data, $idImagen);
+
+		redirect('editarGuia/' . $idGuia . '?e=1');
+	}
+
+	public function updateImagenFunciones()
+	{
+		$idImagen = $this->input->post('idImagen');
+		$idGuia = $this->input->post('idGuia');
+
+		$FunctionamientoEquipo = $this->input->post('FunctionamientoEquipo');
+
+		$ram = rand(1, 10000);
+		$file_name = $_FILES['imageInputFunciones']['name'];
+		$tmp = explode('.', $file_name);
+		$extension_img = end($tmp);
+
+		$user_img_profile = $ram . '.' . $extension_img;
+
+		$mi_archivo = 'imageInputFunciones';
+		$config['upload_path'] = 'uploads/funciones';
+		$config['allowed_types'] = 'gif|jpg|jpeg|png';
+		$config['max_size'] = '5000000';
+		$config['quality'] = '90%';
+		$config['file_name'] = $user_img_profile;
+		$this->load->library('upload', $config);
+
+		if (!$this->upload->do_upload($mi_archivo)) {
+			echo "se presento un error al cargar la imagen";
+		}
+
+		$data = array(
+			'nombre_img' => $user_img_profile,
+			'descripcion' => $FunctionamientoEquipo,
+		);
+
+		$this->Generadorqr_model->updateImagenesGuia($data, $idImagen);
+
+		redirect('editarGuia/' . $idGuia . '?e=1');
+	}
+
+	public function DeleteGuia($id)
+	{
+		$data = array(
+			'estado' => 1
+		);
+
+		$this->Generadorqr_model->DeleteGuia($data, $id);
+	}
 }
